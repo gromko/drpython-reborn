@@ -1,4 +1,4 @@
-# drpyton-reborn
+# DrPython-reborn
 The repository contains the code for the revived drPyton IDE
 
 DrPython is a highly customizable text editor geared towards writing programs in Python quickly and easily. It is written in Python using the wxPython toolkit (which makes use of the Scintilla text control internally).
