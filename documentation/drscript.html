@@ -1,0 +1,229 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>DrScript</title>
+  <link href="drpython.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<p>
+<a href="help.html">Back to DrPython Help</a>
+</p>
+
+<h1>DrScript</h1>
+
+<p>
+DrScript is vaguely modeled after Script-Fu in The Gimp (a VERY powerful open
+source image manipulation program, used on the images in DrPython).
+</p>
+
+<p>
+You can add any Python file you want to the DrPython menu under the heading
+DrScript. Simply select "Add Existing Script".
+</p>
+
+<p>
+To start from scratch, select "Add New Script" to add a new script to the menu,
+then open it for editing. (You will have to select the filename).
+</p>
+
+<p>
+To add a Shell Command, select "Add Shell Command". Note that:
+</p>
+
+<ul>
+  <li><i>Current Directory</i> is replaced with the directory of the currently
+    open file.
+  </li>
+  <li>
+    <i>Current File</i> is replaced with the current open file.
+  </li>
+  <li>
+    <i>Current File</i> can only be used as an argument.
+  </li>
+  <li>
+    You can either run the command in the prompt (default), or run it using
+    wx.Shell().
+  </li>
+</ul>
+
+<p>
+You can select "Dynamic DrScript" from the menu to type in a DrScript right
+away (without saving it to a file). Dynamic DrScripts are parsed in the same
+way as a saved DrScript.
+</p>
+
+<p>
+Whether you select "Add New Script" or "Add Existing Script", you must select
+a title for your script. This is what you will see on the DrScript submenu.
+</p>
+
+<p>
+You can also move scripts Around on the menu once you have added them.
+(Moving scripts around updates and saves all of your shortcuts.)
+</p>
+
+<p>
+When shortcuts have been added to the menu, they can then be seen in the
+customize shortcuts dialog, and you can bind keys to your custom scripts.
+</p>
+
+<p>
+Now you are ready to script! It is advisable to make the first line or so read:
+</p>
+
+<pre>
+#drscript
+</pre>
+
+<p>
+just as a reminder.
+</p>
+
+<p>
+Now let's look at an example DrScript. Let's say you want to write a script
+which adds "with ducks" to the selected text.
+</p>
+
+<pre>
+#drscript
+DrDocument.SetSelectedText(DrDocument.GetSelectedText() + <span style="color: rgb(0, 102, 0);">" with ducks!"</span>)
+</pre>
+
+<span style="color: rgb(51, 51, 51); font-style: italic;">#drscript</span><br>
+<br>
+<span style="color: rgb(0, 0, 0);">DrDocument.SetSelectedText</span><span
+ style="font-weight: bold;">(</span>DrDocument.GetSelectedText()
+<span style="font-weight: bold;">+</span> <span
+ style="color: rgb(0, 102, 0);">" with ducks!"</span><span
+ style="font-weight: bold;">)</span><br>
+<br>
+
+<p>
+First let's look at what this does. Let's say I select the text "The
+Philosopher shares his epipheny". I then select "Add With Ducks" from the
+DrScript submenu. Viola! The text now reads "The Philosopher shares his
+epipheny with ducks!"
+</p>
+
+<p>
+Back to the program. DrPython will run the code in the DrScript exactly as if
+it were written into the source of DrPython itself! The difference is that
+there are special keywords DrPython recognizes.
+</p>
+
+<p>
+You can choose from:
+</p>
+
+<table>
+<tbody>
+  <tr>
+    <td>DrFrame</td>
+    <td>which gives access to DrPython internals (DrFrame)</td>
+  </tr>
+  <tr>
+    <td>DrScript</td>
+    <td>a wxObject attached to DrFrame to hold persistant variables.</td>
+  </tr>
+  <tr>
+    <td>DrFilename</td>
+    <td>the current filename (of the active tab if in mdi mode)</td>
+  </tr>
+  <tr>
+    <td>DrDocument</td>
+    <td>gives access to the Document wxStyledTextControl</td>
+  </tr>
+  <tr>
+    <td>DrPrompt</td>
+    <td>gives access to the Prompt wxStyledTextControl</td>
+  </tr>
+</table>
+
+<p>
+You could choose DrFrame for several reasons. If you want a dialog, all you
+have to do is:
+</p>
+
+<pre>
+wxTextEntryDialog<b>(</b>DrFrame, <span
+style="color: rgb(0, 102, 0);">"Replace What?:"</span>, <span
+style="color: rgb(0, 102, 0);">"Replace All In Selection"</span>, <span 
+style="color: rgb(0, 102, 0);">""</span><b>)</b>
+</pre>
+
+<p>
+In other words, it is perfect for functions that require a wxFrame as an
+argument.
+</p>
+
+<p>
+You can also access DrPython internals.
+</p>
+
+<pre>
+Frame.txtDocument.GetTextLength<b>()</b>
+</pre>
+
+<p>
+Of course, you could also write:
+</p>
+
+<pre>
+DrDocument.GetTextLength<b>()</b>
+</pre>
+
+
+<p>Now if you wanted to set a variable in one script, then use it in another,
+you would write:
+</p>
+
+<pre>
+<span style="color: rgb(51, 51, 51); font-style: italic;">#drscript</span>
+<span style="color: rgb(51, 51, 51); font-style: italic;">#SetWhoRoars</span>
+<span style="color: rgb(0, 0, 0);">
+<span style="font-weight: bold;">import</span> wx</span>
+
+d = wx.TextEntryDialog(DrFrame, "Who Roars?", "Determine Who Roars", "")
+if (d.ShowModal() == wx.ID_OK):
+    DrScript.WhoRoars = d.GetValue()
+</pre>
+
+<pre>
+<span style="color: rgb(51, 51, 51); font-style: italic;">#drscript</span>
+<span style="color: rgb(51, 51, 51); font-style: italic;">#AddRoar</span>
+
+<span style="font-weight: bold;"></span><span
+ style="color: rgb(255, 0, 0);"></span>if DrScript.VariableExists(<span
+ style="color: rgb(0, 102, 0);">"WhoRoars"</span>):
+    DrDocument.SetSelectedText(DrDocument.GetSelectedText() + <span
+ style="color: rgb(0, 102, 0);">" roared the "</span> + DrScript.WhoRoars)
+else:
+    DrDocument.SetSelectedText(DrDocument.GetSelectedText() + <span
+ style="color: rgb(0, 102, 0);">" roared the Mouse")</span>
+</pre>
+
+<p>
+You can also set the text for either the Prompt or Document. For example:
+</p>
+
+<pre>
+<span style="color: rgb(51, 51, 51); font-style: italic;">#drscript</span>
+<span style="color: rgb(51, 51, 51); font-style: italic;">#AddWithDucks</span>
+
+DrPrompt.SetText<span style="font-weight: bold;">(</span>DrDocument.GetSelectedText()<span
+ style="font-weight: bold;">+</span> <span
+ style="color: rgb(0, 102, 0);">" with ducks!"</span><span
+ style="font-weight: bold;">)</span>
+</pre>
+
+<p>
+This code will set the prompt text to the document selection plus the string
+"with ducks!".
+</p>
+
+<p>
+<a href="help.html">Back to DrPython Help</a>
+</p>
+</body>
+</html>

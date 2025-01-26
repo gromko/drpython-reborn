@@ -1,0 +1,829 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Plugins</title>
+  <link href="drpython.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<p>
+<a href="help.html">Back to DrPython Help</a>
+</p>
+<h1>Plugins</h1>
+<p>
+Plugins provide a method of adding functionality to DrPython.
+</p>
+<h2>Installing a Plugin</h2>
+<p>
+Note:
+</p>
+<ul>
+  <li> Plugins are not loaded on install. </li>
+  <li> Some plugins cannot be indexed. They can only be loaded at
+program startup. </li>
+</ul>
+<p>
+You have two options for installing a plugin.
+</p>
+<h3>1. Use the Wizard</h3>
+<p>
+Select Install Plugin from the Configure Plugins Menu (Under Options).
+You can
+either download from a mirror, or select a downloaded plugin to install
+from
+local media.
+</p>
+<p>
+When installing, you will be asked to select which plugins are:
+</p>
+<ul>
+  <li> <b>Loaded By Default</b> (These plugins will be loaded at
+startup. They are placed in the default index [default.idx].) </li>
+  <li> <b>Loaded From Index</b> (If supported (only supported plugins
+will be listed here), these plugins are indexed. You can then select
+them from the options submenu "Load Plugin(s) From Index".) </li>
+</ul>
+<h3>2. Install From Py</h3>
+<p>
+If you are making your own plugin, or have the plugin files availible
+in
+unzipped format, simply locate the main plugin file
+(<tt><i>PluginName</i>.py</tt>), and DrPython will do the rest.
+</p>
+<h2>Configuring a Plugin</h2>
+<p>
+You can (via Options:Configure Plugins) edit the Plugin Source, or
+Create/Edit/Delete Index Files, which are simply lists of plugins to
+load when
+activated.
+</p>
+<p>
+You can edit Plugin Preferences via the Plugin Preferences menu.
+</p>
+<p>
+You can edit shortcuts or add items to the pop up menu or toolbar via
+the
+standard dialogs, for all plugins which support each feature.
+</p>
+<p>
+All changes to a plugin's source take effect the next time DrPython
+loads.
+Shortcuts, Preferences, etc are either immediate, or effective upon
+reload
+depending on the plugin.
+</p>
+<p>
+If a plugin is not loaded, you can still edit shortcuts and the pop up
+menu,
+but you will be unable to access the plugin functions unless the plugin
+is loaded.
+</p>
+<h2>Uninstalling a Plugin</h2>
+<p>
+Simply fire up the Uninstall Wizard.
+</p>
+<h2>Creating a Plugin</h2>
+<p>
+NOTE: If you write your own plugin, please note that you can access the
+entire
+DrPython application (via the DrFrame instance). This means a plugin
+can make
+stuff not work right, or can access an internal function that may be
+changed in
+a future release. If you are adding a new component (such as a new menu
+item,
+and a new dialog), you should be fine.
+</p>
+<h3>Naming Convention</h3>
+<p>
+If you want to distribute your plugin named <tt><i>PluginName</i></tt>,
+make
+sure that:
+</p>
+<ol>
+  <li> All needed files are in a zip file: <tt><i>PluginName</i>-<i>Version</i>.zip</tt>
+  </li>
+  <li> The main plugin file is named: <tt><i>PluginName</i>.py</tt> </li>
+  <li> The install script, if any, is named <tt><i>PluginName</i>.py.install</tt>
+  </li>
+  <li> The index file, if any, is named: <tt><i>PluginName</i>.idx</tt>
+  </li>
+</ol>
+<p>
+The first thing you need to do is import the relevant wxWidgets modules
+(usually just "wx").
+</p>
+<pre><span style="font-weight: bold;">import </span>wx<br></pre>
+<p>
+Next, you need to define the "Plugin" function.
+</p>
+<pre><span style="font-weight: bold;">def</span> <span
+ style="color: rgb(255, 0, 0);">Plugin</span><span
+ style="font-weight: bold;">(</span>DrFrame<span
+ style="font-weight: bold;">)</span>:<br></pre>
+<p>
+DrFrame is the variable for the DrFrame in the DrPython program. It is
+the same
+variable as in DrScript.
+</p>
+<p>
+Now you can add something to the interface simply by using the
+underlying code
+in DrPython. To bind a function to an event, there are two ways. Let's
+take a
+look at the following code.
+</p>
+<pre><span style="color: rgb(51, 153, 153); font-style: italic;">#Example<br>Plugin</span>
+
+<span style="font-weight: bold;">import</span> wx<br><br><span
+ style="font-weight: bold;">def</span> <span
+ style="color: rgb(255, 0, 0);">Plugin</span><span
+ style="font-weight: bold;">(</span>DrFrame<span
+ style="font-weight: bold;">)</span>:<br>
+    idum <span
+ style="font-weight: bold;">=</span> DrFrame.GetNewId<span
+ style="font-weight: bold;">()</span>
+
+    DrFrame.viewmenu.Append<span
+ style="font-weight: bold;">(</span>idum, <span
+ style="color: rgb(0, 102, 0);">"Lookit!"</span>,<span
+ style="color: rgb(0, 102, 0);">" I said Lookit!"</span><span
+ style="font-weight: bold;">)</span>
+
+    <span
+ style="font-weight: bold;">def</span> <span
+ style="color: rgb(255, 0, 0);">exampleFunction</span><span
+ style="font-weight: bold;">(</span>event<span
+ style="font-weight: bold;">)</span>:<br>        DrFrame.ShowPrompt()<br>        DrFrame.txtPrompt.SetText(<span
+ style="color: rgb(0, 102, 0);">"I'm looking.... Now what?"</span>)<br><br>    DrFrame.Bind<span
+ style="font-weight: bold;">(</span>wx.EVT_MENU, exampleFunction, id=idum<span
+ style="font-weight: bold;">)</span>
+
+    DrFrame.AddToPopUpMenu<span
+ style="font-weight: bold;">(</span><span style="color: rgb(0, 153, 0);"><span
+ style="color: rgb(0, 102, 0);">"Lookit!", </span></span>exampleFunction<span
+ style="color: rgb(0, 153, 0);"><span style="color: rgb(0, 0, 0);">, 0</span><span
+ style="font-weight: bold; color: rgb(0, 0, 0);">)</span></span>
+
+    DrFrame.AddSeparatorToPopUpMenu<span
+ style="font-weight: bold;">(</span><span
+ style="color: rgb(51, 51, 255);">1</span><span
+ style="font-weight: bold;">)</span>
+</pre>
+<p>
+What this code does is the following. It adds an item to the viewmenu
+(you can
+grab the menu names by looking in the DrPython source: <tt>drpython.py</tt>).
+DrFrame.GetNewId() makes sure a unique id number is returned. (You only
+need an
+id number if the wx Component you are adding requires one. You need one
+for
+menus).
+</p>
+<p>
+The second step to adding a menu is to use the DrFrame function. There
+are two
+necessary steps. The first is to define a function. If this function is
+going
+to access DrFrame, it must be defined within the Plugin function(which
+is only
+called once, when the plugin is loaded).
+</p>
+<p>
+The function you add must take one argument, <tt>event</tt> You can
+name them
+whatever you want For example, <tt>MenuEvent</tt> the second will hold
+the wx
+Menu Event.
+</p>
+<p>
+Next, you must use the wxPython method Bind() to bind that function to
+the
+component you want. Consult the wxPython documentation for usage. Here
+is a
+brief summary of Bind().
+</p>
+<p>
+<tt>wxPythonWidget.Bind(wx.EVT_EVENTTYPE, Function, id=IdNumber).</tt>
+<br>
+The idNumber argument is optional (recommended if the eventtype in
+question
+allows it, check the wxWidgets documentation for that info).
+<tt>wx.EVT_EVENTTYPE</tt> is the event type (wxWidgets documentation
+for a
+list). Function is the function you are binding to the widget.
+</p>
+<hr>
+<p>To Tell DrPython to let a user access a function from keyboard
+shortcuts, the
+pop up menu, or the toolbar, you have several options. You can specify
+each
+separately (or choose only one or two methods), or you can specify all
+at once.
+</p>
+<pre><span style="font-weight: bold;">DrFrame.</span><span
+ style="font-weight: bold;">AddPluginFunction</span>(NameOfTheCurrentPlugin, FunctionLabel, FunctionYouWantToAdd)<br></pre>
+<p>
+Here is a brief code example.
+</p>
+<pre>DrFrame.AddPluginShortcutFunction<span style="font-weight: bold;">(</span><span
+ style="color: rgb(0, 102, 0);">"SearchInFiles"</span>, <span
+ style="color: rgb(0, 102, 0);">"Find In Files"</span>, OnFindInFiles<span
+ style="font-weight: bold;">)</span>
+</pre>
+<p>
+This will let the user add the function OnFindInFiles to keyboard
+shortcuts,
+the pop up menu, or the toolbar.
+</p>
+<p>
+For more info on what this means for each method, see below.
+</p>
+<hr>
+<p>To add a keyboard shortcut, you have two options. You can simply use
+"AddKeyEvent". It takes the following arguments.
+</p>
+<pre><span style="font-weight: bold;">DrFrame.AddKeyEvent</span>(FunctionYouWantToAdd, Keycode, Control, Shift, Alt, Meta)<br></pre>
+<p>
+The default for all modifier keys (Control, Shift, Alt, Meta) is 0 (do
+not use).
+</p>
+<p>
+Keycodes can be tricky. For both lowercase and uppercase, use the
+Python
+function <tt>ord()</tt> plus the uppercase letter. Add Shift=1 if you
+want to
+use uppercase.
+</p>
+<p>
+<b>Target</b>: Uppercase 'A'
+</p>
+<pre><span style="font-weight: bold;">DrFrame.</span><span
+ style="font-weight: bold;">AddKeyEvent</span>(FunctionYouWantToAdd, ord('A'), 0, 1)<br></pre>
+<p>
+<b>Target</b>: Lowercase 'a'
+</p>
+<pre><span style="font-weight: bold;">DrFrame.</span><span
+ style="font-weight: bold;">AddKeyEvent</span>(FunctionYouWantToAdd, ord('A'))<br></pre>
+<p>
+This will make the shortcut set in stone.
+</p>
+<p>
+If you want to let the user configure the shortcut:
+</p>
+<pre><span style="font-weight: bold;">DrFrame.</span><span
+ style="font-weight: bold;">AddPluginShortcutFunction</span>(NameOfTheCurrentPlugin, FunctionLabel, FunctionYouWantToAdd)<br></pre>
+<p>
+For example:
+</p>
+<pre><span style="color: rgb(51, 153, 153); font-style: italic;">#Example Plugin<br>#This file is called "examplenumber2.py"</span>
+
+<span style="font-weight: bold;">import</span> wx<br><br><span
+ style="font-weight: bold;">def</span> <span
+ style="color: rgb(255, 0, 0);">Plugin</span><span
+ style="font-weight: bold;">(</span>DrFrame<span
+ style="font-weight: bold;">)</span>:<br>
+    idum <span
+ style="font-weight: bold;">=</span> DrFrame.GetNewId<span
+ style="font-weight: bold;">()</span><span style="font-weight: bold;"></span>
+
+    DrFrame.viewmenu.Append<span
+ style="font-weight: bold;">(</span>idum, <span
+ style="color: rgb(0, 102, 0);">"Lookit!"</span>, <span
+ style="color: rgb(0, 102, 0);">" I said Lookit!"</span><span
+ style="font-weight: bold;">)</span>
+
+    <span
+ style="font-weight: bold;">def</span> <span
+ style="color: rgb(255, 0, 0);">exampleFunction</span><span
+ style="font-weight: bold;">(</span>event<span
+ style="font-weight: bold;">)</span>:<br>        DrFrame.ShowMessage<span
+ style="font-weight: bold;">(</span><span style="color: rgb(0, 102, 0);">"I'm Looking Already!"</span>, <span
+ style="color: rgb(0, 102, 0);">"Result:"</span><span
+ style="font-weight: bold;">)</span>
+
+    DrFrame.Bind<span
+ style="font-weight: bold;">(</span>wx.EVT_MENU, exampleFunction, id=idum<span
+ style="font-weight: bold;">)</span>
+
+    DrFrame.AddPluginShortcutFunction<span
+ style="font-weight: bold;">(</span><span style="color: rgb(0, 102, 0);">"examplenumber2"</span>, <span
+ style="color: rgb(0, 102, 0);">"Example Function"</span>, exampleFunction<span
+ style="font-weight: bold;">)</span>
+</pre>
+<p>
+Now, you can open the customize shortcuts dialog, and select the
+"examplenumber2" plugin, to set the shortcut for the function
+"exampleFunction"
+you just added.
+</p>
+<p>
+Note the use of the ShowMessage function.
+</p>
+<p>
+Show message calls the drScrolledMessageDialog.
+DrFrame.ShowMessage<span style="font-weight: bold;">(</span>message,
+title<span style="font-weight: bold;">)
+</span>The drScrolledMessageDialog automatically displays a traceback
+if one exists.
+</p>
+<hr>
+<p>To allow the user to add to the pop up menu, use
+<tt>AddPluginPopUpMenuFunction</tt>.
+</p>
+<pre><span style="font-weight: bold;">AddPluginPopUpMenuFunction</span>(NameOfTheCurrentPlugin, FunctionLabel, FunctionYouWantToAdd)<br></pre>
+<p>
+The NameOfTheCurrentPlugin is straightforward.
+</p>
+<p>
+This will allow the user to, via the PopUpMenu Dialog, add a Plugin
+Function
+to the PopUpMenu (with the label <i>FunctionLabel</i>).
+</p>
+<p>
+Notes: If you uninstall the plugin, you have to manually remove the
+item
+from the PopUpMenu list via the PopUpMenu Dialog.
+</p>
+<p>
+Each Plugin Item on the PopUpMenu is only loaded if that plugin is
+loaded.
+So if the plugin is loaded via index, when you load the plugin, the
+relevant
+item will show up on the PopUpMenu. Even if the plugin is not loaded,
+the item
+is on the PopUpMenu List.
+</p>
+<hr>
+<p>To allow the user to add to the ToolBar, use
+<tt>AddPluginToolBarFunction</tt>.
+</p>
+<pre><span style="font-weight: bold;">AddPluginToolBarFunction</span>(FunctionLabel, FunctionYouWantToAdd)<br></pre>
+<p>
+This will allow the user to, via the Customize ToolBar Dialog, add a
+Plugin
+Function to the ToolBar (with the label <i>FunctionLabel</i>).
+</p>
+<p>
+Notes: If you uninstall the plugin, you have to manually remove the
+item from
+the ToolBar list via the ToolBar Dialog.
+</p>
+<p>
+Each Plugin Item on the ToolBar will be loaded no matter what, so be
+sure to
+remove the entry if you remove the plugin (if not, nothing will happen
+when you
+click the button.)
+</p>
+<p>
+To set icons, you have two options. One is to write an install script
+that
+installs the icons onto the user's harddrive, and then adds entries for
+each
+icon into the custom icon data file in the user's DrPython preferences
+directory.
+</p>
+<p>
+The other is to let the user set the icons manually.
+</p>
+<p>
+To add entries, you can either do so manually, or use the following
+built in
+functions.
+</p>
+<pre><span style="font-weight: bold;">AddPluginIcon</span>(Label, LocationOf16x16File, LocationOf24x24File)<br></pre>
+<pre><span style="font-weight: bold;">RemovePluginIcon</span>(Label)<br></pre>
+<p>
+Here is an example.
+</p>
+<pre>plugindir = DrFrame.GetPluginsDirectory()<br>DrFrame.AddPluginIcon<span
+ style="font-weight: bold;">(</span><span style="color: rgb(0, 102, 0);">"Find In Files"</span>, <span
+ style="color: rgb(0, 102, 0);">""</span>,<span
+ style="font-weight: bold;"> </span><span style="color: rgb(0, 102, 0);"><span
+ style="color: rgb(0, 0, 0);">plugindir + </span>"/bitmaps/24/Find In Files.png"</span><span
+ style="font-weight: bold;">)</span>
+</pre>
+<p>
+Assuming you have copied the icon file to the proper location
+(in this case, in the plugin directory <tt>plugindir/bitmaps/24/</tt>),
+this will add an entry into the user's custom icon data file, so that
+if they
+have their toolbar set to 24x24, and they add the Find In Files item,
+it will
+display the "Find In Files.png" icon. This function is best called in a
+<tt>.install</tt> script.
+</p>
+<p>
+<tt>RemovePluginIcon</tt> is best called in the <tt>Uninstall</tt>
+function,
+and removes the entry in question from the custom icon data file.
+</p>
+<pre>DrFrame.RemovePluginIcon<span style="font-weight: bold;">(</span><span
+ style="color: rgb(0, 102, 0);">"Find In Files"<span
+ style="font-weight: bold; color: rgb(0, 0, 0);">)</span></span>
+</pre>
+<p>
+Note: <tt>AddPluginIcon</tt> will overwrite any entries in the custom
+icon data file
+with the same label.
+</p>
+<hr>
+<p>If the you want to set and load preferences in your plugin, all you
+have to do
+to edit those preferences is define a function.
+</p>
+<pre><span style="font-weight: bold;">def </span><span
+ style="color: rgb(255, 0, 0);">OnPreferences<span
+ style="font-weight: bold;"><span style="color: rgb(0, 0, 0);">(</span></span><span
+ style="color: rgb(0, 0, 0);">DrFrame</span><span
+ style="font-weight: bold;"><span style="color: rgb(0, 0, 0);">)</span></span><span
+ style="color: rgb(0, 0, 0);">:<br></span></span></pre>
+<p>
+This function will be called (with DrFrame as the argument) from the
+Options
+menu. You can make your own Preferences Dialog, and have it launched
+from this
+function.
+</p>
+<hr>
+<p>If you want to have an About dialog, or a Help dialog, use:
+</p>
+<pre><span style="font-weight: bold;">def </span><span
+ style="color: rgb(255, 0, 0);">OnAbout<span style="font-weight: bold;"><span
+ style="color: rgb(0, 0, 0);">(</span></span><span
+ style="color: rgb(0, 0, 0);">DrFrame</span><span
+ style="font-weight: bold;"><span style="color: rgb(0, 0, 0);">)</span></span><span
+ style="color: rgb(0, 0, 0);">:</span></span>
+</pre>
+<pre><span style="font-weight: bold;">def </span><span
+ style="color: rgb(255, 0, 0);">OnHelp<span style="font-weight: bold;"><span
+ style="color: rgb(0, 0, 0);">(</span></span><span
+ style="color: rgb(0, 0, 0);">DrFrame</span><span
+ style="font-weight: bold;"><span style="color: rgb(0, 0, 0);">)</span></span><span
+ style="color: rgb(0, 0, 0);">:<br></span></span></pre>
+<p>
+This function will be called (with DrFrame as the argument) from the
+Help menu.
+You can make your own Dialog, and have it launched from this function.
+</p>
+<hr>
+<pre><span style="font-weight: bold;">def </span><span
+ style="color: rgb(255, 0, 0);">AddPluginOnCloseFunction</span><span
+ style="font-weight: bold;">(</span>pluginname, function<span
+ style="font-weight: bold;">)</span>:<br></pre>
+<pre><span style="font-weight: bold;">def </span><span
+ style="color: rgb(255, 0, 0);">AddPluginOnNewFunction</span><span
+ style="font-weight: bold;">(</span>pluginname, function, RunOnLoad<span
+ style="font-weight: bold;">)</span>:<br></pre>
+<pre><span style="font-weight: bold;">def </span><span
+ style="color: rgb(255, 0, 0);">AddPluginOpenFileFunction</span><span
+ style="font-weight: bold;">(</span>pluginname, function, RunFirst<span
+ style="font-weight: bold;">)</span>:<br></pre>
+<pre><span style="font-weight: bold;">def </span><span
+ style="color: rgb(255, 0, 0);">AddPluginSaveFileFunction</span><span
+ style="font-weight: bold;">(</span>pluginname, function, RunFirst<span
+ style="font-weight: bold;">)</span>:<br></pre>
+<p>
+These functions allow you to run code when a file is opened or saved,
+and when
+a new document is created or closed.
+</p>
+<p>
+The <tt>OnClose</tt> and <tt>OnNew</tt> functions must take one
+argument,
+which is DrFrame. The <tt>OnClose</tt> and <tt>OnNew</tt> plugin
+functions are
+run at the end of DrFrame.OnClose, and DrFrame.OnNew.
+</p>
+<p>
+The <tt>RunOnLoad</tt> function runs the code for the plugin On New
+function
+when the plugin is loaded.
+</p>
+<p>
+<i><b>Note: If a plugin runs code in <tt>OnNew</tt>, it is highly
+recommended
+that the plugin is loaded by default, rather than via an index.
+Otherwise
+things can be a bit complicated if multuiple documents are open when
+the
+plugin is loaded (you can always handle this in your plugin code,
+however).
+</b></i></p>
+<p>
+The <tt>OpenFile</tt> and <tt>SaveFile</tt> functions must take two
+arguments,
+the first is DrFrame, the second will be the filename.
+</p>
+<p>
+The last argument specifies whether the code is run at the start or at
+the end
+(default) of <tt>DrFrame.OpenFile</tt> and <tt>DrFrame.SaveFile.</tt>
+</p>
+<hr>
+<h2>Adding to Panels</h2>
+<p>
+Want to write a panel to access from the main window? Here is what the
+code
+looks like for the creation of a Panel.
+</p>
+<pre>if self.txtDocument.SourceBrowser is None:<br>    target, i = self.currentpage.GetTargetSashWindow(self.prefs.sourcebrowserpanel)<br>    self.txtDocument.SourceBrowser = drSourceBrowserPanel(target, -1, self.prefs.sourcebrowserpanel, i)<br>    self.currentpage.OnSize(None)<br>else:<br>    if not self.currentpage.IsVisible(self.txtDocument.SourceBrowser.Position, self.txtDocument.SourceBrowser.Index):<br>        self.txtDocument.SourceBrowser.Browse()<br>    self.currentpage.TogglePanel(self.txtDocument.SourceBrowser.Position, self.txtDocument.SourceBrowser.Index)<br></pre>
+<p>
+Now there are several important things to note.
+</p>
+<ol>
+  <li> <tt>GetTargetSashWindow</tt> takes one argument, the position
+(0 = Left, 1 = Right, 2 = Top, 3 = Bottom) </li>
+  <li> <tt>GetTargetSashWindow</tt> returns the window itself (the
+parent of the Panel you create), and the index. The Index and the
+Position (Left, Right, Top, Bottom) are how you access that specific
+panel. In this case, the last two arguments to <tt>drSourceBrowserPanel</tt>
+are the position and the index. </li>
+  <li> You need to call <tt>OnSize</tt> after newly creating a panel. (<tt>OnSize</tt>
+takes one argument, the event, which should be set to None). </li>
+  <li> You have two options for toggling a panel.
+    <ol style="list-style-type: upper-alpha;">
+      <li> Simply call <tt>TogglePanel(Position, Index)</tt>. </li>
+      <li> Call <tt>ShowPanel(Position, Index, ShowThePanel)</tt>.
+(ShowThePanel is a boolean). </li>
+    </ol>
+If you choose B, you can use <tt>IsVisible(Position, Index)</tt> to
+determine if the Panel is showing. In this case, if the panel is going
+to be shown, DrPython refreshes the Source Browser. </li>
+</ol>
+<p>
+Here is the code for destroying the Panel.
+</p>
+<pre>def OnbtnClose(self, event):<br>    self.parent.txtDocument.SourceBrowser = None<br>    self.panelparent.ClosePanel(self.Position, self.Index)<br></pre>
+<p>
+<tt>ClosePanel(Position, Index)</tt> will destroy the panel completely,
+so any
+code after it will cause issues. This makes calling <tt>ClosePanel</tt>
+from code that gets called more than one (like <tt>wx.EVT_SIZE</tt>) a
+bad idea.
+</p>
+<p>
+Also note that the SourceBrowser variable is set to None here. Closing
+a Panel
+does not automatically do this, so if you are using the value of
+variable
+holding the Panel in your code, be sure to set it to None before
+destroying the
+Panel itself.
+</p>
+<p>
+The full code can be found in the SourceBrowser code in the DrPython
+Core.
+</p>
+<hr>
+<h2>Install/Uninstall Scripts</h2>
+<p>
+DrPython provides a method for automatic install script execution.
+</p>
+<p>
+If you have a plugin named <tt>example.py</tt>, a file named
+<tt>example.py.install</tt> in the same directory will be automatically
+run on
+install.
+</p>
+<h3>Install Script</h3>
+<p>
+An install script is especially useful if you have files you want to
+install to
+a specific location on the user's hard drive (eg, bitmaps for the
+toolbar).
+</p>
+<p>
+Here is an example.
+</p>
+<pre><span style="color: rgb(51, 153, 153); font-style: italic;">#Example<br>Plugin Install Script<br>#This file is called "example.py.install"</span>
+
+<span style="font-weight: bold;">import</span> wx, shutil, os, os.path<br><br><span
+ style="font-weight: bold;">def</span> <span
+ style="color: rgb(255, 0, 0);">Install</span><span
+ style="font-weight: bold;">(</span>DrFrame<span
+ style="font-weight: bold;">)</span>:<br>    d = wx.MessageDialog<span
+ style="font-weight: bold;">(</span>DrFrame, <span
+ style="color: rgb(0, 102, 0);">"This will install some bitmaps for the Example plugin.\nAre you sure you want to proceed?"</span>,<br>        <span
+ style="color: rgb(0, 102, 0);">"Install Search In Files"</span>,<br>        wx.YES_NO | wx.ICON_QUESTION<span
+ style="font-weight: bold;">)</span>
+    answer = d.ShowModal<span
+ style="font-weight: bold;">()</span>
+    d.Destroy<span
+ style="font-weight: bold;">()</span>
+    if <span
+ style="font-weight: bold;">(</span>answer == wx.ID_YES<span
+ style="font-weight: bold;">)</span>:<br>        cwd = os.getcwd<span
+ style="font-weight: bold;">()</span>
+        plugindir = DrFrame.GetPluginsDirectory<span
+ style="font-weight: bold;">()</span>
+        if not os.path.exists<span
+ style="font-weight: bold;">(</span>plugindir + <span
+ style="color: rgb(0, 102, 0);">"/bitmaps"</span><span
+ style="font-weight: bold;">)</span>:<br>            os.mkdir<span
+ style="font-weight: bold;">(</span>plugindir + <span
+ style="color: rgb(0, 102, 0);">"/bitmaps"</span><span
+ style="font-weight: bold;">)</span>
+        if not os.path.exists<span
+ style="font-weight: bold;">(</span>plugindir + <span
+ style="color: rgb(0, 102, 0);">"/bitmaps/16"</span><span
+ style="font-weight: bold;">)</span>:<br>            os.mkdir<span
+ style="font-weight: bold;">(</span>plugindir + <span
+ style="color: rgb(0, 102, 0);">"/bitmaps/16"</span><span
+ style="font-weight: bold;">)</span>
+        if not os.path.exists<span
+ style="font-weight: bold;">(</span>plugindir + <span
+ style="color: rgb(0, 102, 0);">"/bitmaps/24"</span><span
+ style="font-weight: bold;">)</span>:<br>            os.mkdir<span
+ style="font-weight: bold;">(</span>plugindir + <span
+ style="color: rgb(0, 102, 0);">"/bitmaps/24"</span><span
+ style="font-weight: bold;">)</span>
+
+        shutil.copyfile<span
+ style="font-weight: bold;">(</span>cwd + <span
+ style="color: rgb(0, 102, 0);">"/bitmaps/16/Example.png"</span>, plugindir + <span
+ style="color: rgb(0, 102, 0);">"/bitmaps/16/Example.png"</span><span
+ style="font-weight: bold;">)</span>
+        shutil.copyfile<span
+ style="font-weight: bold;">(</span>cwd + <span
+ style="color: rgb(0, 102, 0);">"/bitmaps/24/Example.png"</span>, plugindir + <span
+ style="color: rgb(0, 102, 0);">"/bitmaps/24/Example.png"</span><span
+ style="font-weight: bold;">)</span>
+
+        DrFrame.AddPluginIcon<span
+ style="font-weight: bold;">(</span><span style="color: rgb(0, 102, 0);">"Example"</span>, plugindir + <span
+ style="color: rgb(0, 102, 0);">"/bitmaps/16/Example.png"</span>,<span
+ style="font-weight: bold;"> </span><span style="color: rgb(0, 102, 0);"><span
+ style="color: rgb(0, 0, 0);">plugindir + </span>"/bitmaps/24/Example.png"</span><span
+ style="font-weight: bold;">)</span>
+
+    <span
+ style="font-weight: bold;">return</span> True<br></pre>
+<p>
+Note the return statement. This determines the behaviour after your
+plugin
+install script exits. If you return <tt>True</tt>, DrPython will
+continue to
+install the plugin. This is good if you just want to install some
+bitmaps,
+but otherwise want DrPython to handle the rest.
+</p>
+<p>
+Returning <tt>False</tt> will tell DrPython to halt the installation.
+This is
+good if you want to let the user cancel, or if you want to manually
+install the
+plugin yourself. Also note <tt>GetPluginsDirectory()</tt>. This
+returns
+the
+user directory where plugins are stored once they are installed.
+</p>
+<h3>Uninstall Script</h3>
+<p>
+If you want specific behaviour on uninstall, write a method in your
+plugin file
+called <tt>UnInstall</tt>.
+</p>
+<pre><span style="color: rgb(51, 153, 153); font-style: italic;">#Example Plugin</span>
+
+<span style="font-weight: bold;">import</span> wx, os, os.path<br><br><span
+ style="font-weight: bold;">def </span><span
+ style="color: rgb(255, 0, 0);">UnInstall</span><span
+ style="font-weight: bold;">(</span>DrFrame<span
+ style="font-weight: bold;">)</span>:<br>    plugindir = DrFrame.GetPluginsDirectory<span
+ style="font-weight: bold;">()</span>
+    if os.path.exists<span
+ style="font-weight: bold;">(</span>plugindir + <span
+ style="color: rgb(0, 102, 0);">"/bitmaps/16/Example.png"</span><span
+ style="font-weight: bold;">)</span>:<br>        os.remove<span
+ style="font-weight: bold;">(</span>plugindir + <span
+ style="color: rgb(0, 102, 0);">"/bitmaps/16/Example.png"</span><span
+ style="font-weight: bold;">)</span>
+    if os.path.exists<span
+ style="font-weight: bold;">(</span>plugindir + <span
+ style="color: rgb(0, 102, 0);">"/bitmaps/24/Example.png"</span><span
+ style="font-weight: bold;">)</span>:<br>        os.remove<span
+ style="font-weight: bold;">(</span>plugindir + <span
+ style="color: rgb(0, 102, 0);">"/bitmaps/24/Example.png"</span><span
+ style="font-weight: bold;">)</span>
+
+    DrFrame.RemovePluginIcon<span
+ style="font-weight: bold;">(</span><span style="color: rgb(0, 102, 0);">"Example"</span><span
+ style="font-weight: bold;">)</span>
+
+    <span
+ style="font-weight: bold;">return</span> True<br><br><span
+ style="font-weight: bold;">def</span> <span
+ style="color: rgb(255, 0, 0);">Plugin</span><span
+ style="font-weight: bold;">(</span>DrFrame<span
+ style="font-weight: bold;">)</span>:<br>    yadda yadda yadda...<br></pre>
+<p>
+Again, note the return. <tt>UnInstall</tt> must take a DrFrame as the
+only
+argument. If this function returns <tt>True</tt>, DrPython will
+continue with
+the rest of the uninstall process. If the function returns <tt>False</tt>,
+DrPython will halt the uninstall.
+</p>
+<p>
+</p>
+<hr>
+<h2>Useful Methods<br>
+</h2>
+<p>Here are a few useful methods, and what they do:<br>
+(They are all members of DrFrame)<br>
+</p>
+<pre><span style="font-weight: bold;">Ask</span>(question, title='DrPython')<br></pre>
+<p>
+</p>
+Asks a yes or no question, with an optional title.<br>
+Returns True if the user selects 'Yes',<br>
+False otherwise.<br>
+<pre><span style="font-weight: bold;">Execute</span>(command, statustext='')<br></pre>
+<p>
+</p>
+Executes a raw command in the prompt, displaying optional statustext.<br>
+<pre><span style="font-weight: bold;">ExecutePython</span>()<br></pre>
+<p>
+</p>
+Runs the python interpreter in the prompt.<br>
+<pre><span style="font-weight: bold;">ExecuteWithPython</span>(command, statustext='', pythonargs='')<br></pre>
+<p>
+</p>
+Executes a command as an argument to python in the prompt, displaying
+optional statustext,<br>
+and using optional additional arguments to the python interpreter (in
+addition to those set in preferences).<br>
+<p></p>
+<pre><span style="font-weight: bold;">GetActiveSTC</span>()<br></pre>
+<p>
+</p>
+<p>Returns the active Styled Text Control (Document or Prompt).<br>
+</p>
+<pre><span style="font-weight: bold;">GetAlreadyOpen</span>()<br></pre>
+<p>
+</p>
+Returns a tuple of the filenames of each open Document.<br>
+<pre><span style="font-weight: bold;">GetNewId</span>()<br></pre>
+<p>
+</p>
+Returns a new wx Id, making sure the value is not anywhere near
+constants used by drpython.<br>
+<pre><span style="font-weight: bold;">GetPluginsDirectory</span>()<br></pre>
+<p>
+</p>
+Returns the directory where the user's plugins are stored.
+<pre><span style="font-weight: bold;">GetPluginMenuLabel</span>(plugin, functionlabel, menulabel='')<br></pre>
+<p>
+</p>
+You must first add the shortcuts with (DrFrame.AddPluginFunction or
+DrFrame.AddPluginShortcutFunction).<br>
+Then use DrFrame.LoadShortcuts(plugin).<br>
+When this function is called, it will return a properly formatted menu
+label that includes<br>
+the corresponding shortcut.<br>
+<br>
+'plugin' is the name of the plugin.&nbsp; 'functionlabel' is the label
+given in 'AddPluginFunction'.<br>
+'menulabel' (optional) lets you specify a specific label to append the
+shortcut to<br>
+(like adding '...' or and Ampersand).<br>
+<pre><span style="font-weight: bold;">GetPreference</span>(pref, key=None)<br></pre>
+<p>
+</p>
+Returns the value of preference 'pref', using the optional key 'key'.<br>
+pref should be a string.<br>
+key should be either a string or an integer as appropriate.<br>
+<pre><span style="font-weight: bold;">GetPreferencesDirectory</span>()<br></pre>
+<p>
+</p>
+Returns the directory where the user's preferences, shortcuts, pop up
+menu, toolbar settings, etc, are stored.
+<pre><span style="font-weight: bold;">LoadPluginShortcuts</span>(plugin)<br></pre>
+<p>
+</p>
+If this is called within a plugin, it will load the shortcuts (useful
+if you<br>
+need to get the shortcuts to display in the menu).<br>
+<br>
+Otherwise, it is automatically called during plugin initialization.<br>
+<br>
+It can only be called once for each plugin.<br>
+<pre><span style="font-weight: bold;">ShowMessage</span>(msg, title='DrPython')<br></pre>
+<p>
+</p>
+Shows a message, with an optional title.&nbsp; If there are any
+tracebacks<br>
+to be had, shows them too.<br>
+<pre><span style="font-weight: bold;">ShowPrompt</span>(Visible=True)<br></pre>
+<p>
+</p>
+Either shows or hides the prompt.<br>
+<pre><span style="font-weight: bold;">ViewURLInBrowser</span>(url)<br></pre>
+<p>
+</p>
+Shows the url in the default browser specified in preferences.
+<p><a href="help.html">Back to DrPython Help</a>
+</p>
+</body>
+</html>
